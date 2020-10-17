@@ -58,20 +58,24 @@
 
         // let enemy={hp:5,x:1000*Math.random(),y:5}
         // let enemy=()=>{ return {hp:5,x:1000*Math.random(),y:5} }
-        let makeEnemy = (text) => {
+        //int = [text, freq]
+        let makeEnemy = (inp) => {
             return {
                 hp: 5,
-                text:text,
+                text:inp[0] || null, //text
+                speed: inp[1] || 1,
                 x: 1000 * Math.random(), y: 200 * Math.random(), r: 10,
                 dx:null, dy:null,
-                hitFunction: (s) => [s.x-=300*s.dx,s.y-=300*s.dy,]
+
+                hitFunction: (s) => [s.x-=100*s.dx/Math.hypot(s.dx,s.dy),s.y-=100*s.dy/Math.hypot(s.dx,s.dy)]
+                // hitFunction: (s) => [s.x-=300*s.dx,s.y-=300*s.dy]
                 // hitFunction: (s) => enemies.delete(s)
             }
         }
         // let makeBullet = {x: 1000 * Math.random(), y: 200 * Math.random(), } }
 
 
-        let enemies = new Set(["SI PT","Hand PT", "Sleep 8 hr", "Do qigong"].map((t) => makeEnemy(t))) //         // let enemy=()=>{ return {hp:5,x:1000*Math.random(),y:5} }
+        let enemies = new Set([["SI PT",1],["Hand PT",2], ["Sleep 8 hr",1], ["Do qigong",3], ["Oil Change",1/180], ["Dentist",1/180], ["Doctor Checkup",1/180], ["Hamlet Lines"]].map((t) => makeEnemy(t))) //         // let enemy=()=>{ return {hp:5,x:1000*Math.random(),y:5} }
         // let enemies = new Set(Array(4).fill(null).map(() => makeEnemy())) //         // let enemy=()=>{ return {hp:5,x:1000*Math.random(),y:5} }
         let bullets = new Set() //{x,y,dx,dy}
 
@@ -85,7 +89,7 @@
         //     enemies.push(makeEnemy())
         // }
 
-        let enemySpeed = 1.5
+        let baseEnemySpeed = .1
 
         var bricks = [];
         for (var c = 0; c < brickColumnCount; c++) {
@@ -348,12 +352,12 @@
 
             //update dx
 
-            // enemyDx^2+enemyDy^2=enemySpeed^2
+            // enemyDx^2+enemyDy^2=baseEnemySpeed^2
             enemies.forEach(enemy => {
                 let baseAngle = Math.atan2(base.y - enemy.y, base.x - enemy.x)
 
-                enemy.dx = Math.cos(baseAngle) * enemySpeed
-                enemy.dy = Math.sin(baseAngle) * enemySpeed
+                enemy.dx = Math.cos(baseAngle) * baseEnemySpeed *enemy.speed
+                enemy.dy = Math.sin(baseAngle) * baseEnemySpeed *enemy.speed
             })
 
             // bullets.forEach(obj => {
