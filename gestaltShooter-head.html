@@ -50,15 +50,21 @@
         var lives = 3;
 
         let base = { x: 200, y: 200 }
-        let enemies = []
-        let bullets = [] //{x,y,dx,dy}
+        // let enemies = [] //         // let enemy=()=>{ return {hp:5,x:1000*Math.random(),y:5} }
+        // let bullets = [] //{x,y,dx,dy}
+
+
 
         // let enemy={hp:5,x:1000*Math.random(),y:5}
         // let enemy=()=>{ return {hp:5,x:1000*Math.random(),y:5} }
         let makeEnemy = () => { return { hp: 5, x: 1000 * Math.random(), y: 200 * Math.random(), r:10 } }
         // let makeBullet = {x: 1000 * Math.random(), y: 200 * Math.random(), } }
 
-        enemies = Array(4).fill(null).map(() => makeEnemy())
+
+        let enemies = new Set(Array(4).fill(null).map(() => makeEnemy())) //         // let enemy=()=>{ return {hp:5,x:1000*Math.random(),y:5} }
+        let bullets = new Set() //{x,y,dx,dy}
+ 
+        let uObjs = new Set([...enemies,...bullets]) 
         console.log('new')
         // fill(makeEnemy())
 
@@ -118,7 +124,7 @@
 
         function fire() {
             const BULLET_SPEED = 4
-            bullets.push({ x: base.x, y: base.y, dx: BULLET_SPEED * turret.rX, dy: BULLET_SPEED * turret.rY })
+            bullets.add({ x: base.x, y: base.y, dx: BULLET_SPEED * turret.rX, dy: BULLET_SPEED * turret.rY })
 
         }
 
