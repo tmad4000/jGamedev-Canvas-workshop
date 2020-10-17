@@ -49,7 +49,7 @@
         var score = 0;
         var lives = 3;
 
-        let base = { x: canvas.width/2, y: canvas.height/2 }
+        let base = { x: canvas.width / 2, y: canvas.height / 2 }
         // let base = { x: 200, y: 200 }
         // let enemies = [] //         // let enemy=()=>{ return {hp:5,x:1000*Math.random(),y:5} }
         // let bullets = [] //{x,y,dx,dy}
@@ -58,11 +58,21 @@
 
         // let enemy={hp:5,x:1000*Math.random(),y:5}
         // let enemy=()=>{ return {hp:5,x:1000*Math.random(),y:5} }
-        let makeEnemy = () => { return { hp: 5, x: 1000 * Math.random(), y: 200 * Math.random(), r: 10 } }
+        let makeEnemy = (text) => {
+            return {
+                hp: 5,
+                text:text,
+                x: 1000 * Math.random(), y: 200 * Math.random(), r: 10,
+                dx:null, dy:null,
+                hitFunction: (s) => [s.x-=300*s.dx,s.y-=300*s.dy,]
+                // hitFunction: (s) => enemies.delete(s)
+            }
+        }
         // let makeBullet = {x: 1000 * Math.random(), y: 200 * Math.random(), } }
 
 
-        let enemies = new Set(Array(4).fill(null).map(() => makeEnemy())) //         // let enemy=()=>{ return {hp:5,x:1000*Math.random(),y:5} }
+        let enemies = new Set(["SI PT","Hand PT", "Sleep 8 hr", "Do qigong"].map((t) => makeEnemy(t))) //         // let enemy=()=>{ return {hp:5,x:1000*Math.random(),y:5} }
+        // let enemies = new Set(Array(4).fill(null).map(() => makeEnemy())) //         // let enemy=()=>{ return {hp:5,x:1000*Math.random(),y:5} }
         let bullets = new Set() //{x,y,dx,dy}
 
         let uObjs = new Set([...enemies, ...bullets])
@@ -75,7 +85,7 @@
         //     enemies.push(makeEnemy())
         // }
 
-        let enemySpeed = 2
+        let enemySpeed = 1.5
 
         var bricks = [];
         for (var c = 0; c < brickColumnCount; c++) {
@@ -131,22 +141,27 @@
 
 
         function collisionDetection() {
-            for (var c = 0; c < brickColumnCount; c++) {
-                for (var r = 0; r < brickRowCount; r++) {
-                    var b = bricks[c][r];
-                    if (b.status == 1) {
-                        if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
-                            dy = -dy;
-                            b.status = 0;
-                            score++;
-                            if (score == brickRowCount * brickColumnCount) {
-                                // alert("YOU WIN, CONGRATS!");
-                                document.location.reload();
-                            }
-                        }
-                    }
-                }
-            }
+            bullets.forEach(obj =>
+                enemies.forEach(e => Math.hypot(obj.x - e.x, obj.y - e.y) < e.r ?
+                    [e.hitFunction(e), bullets.delete(obj)] : null))
+
+
+            // for (var c = 0; c < brickColumnCount; c++) {
+            //     for (var r = 0; r < brickRowCount; r++) {
+            //         var b = bricks[c][r];
+            //         if (b.status == 1) {
+            //             if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
+            //                 dy = -dy;
+            //                 b.status = 0;
+            //                 score++;
+            //                 if (score == brickRowCount * brickColumnCount) {
+            //                     // alert("YOU WIN, CONGRATS!");
+            //                     document.location.reload();
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
         }
 
         function drawBall() {
@@ -205,6 +220,9 @@
             ctx.fillStyle = "#0095DD";
             ctx.fill();
             ctx.closePath();
+            if(e.text) {
+                ctx.fillText(e.text, e.x+e.r+2, e.y);
+            }
 
 
             // for(var c=0; c<brickColumnCount; c++) {
@@ -274,9 +292,119 @@
         }
 
         function nextTurn() {
+            draw()
+
+
+
+            collisionDetection();
+
+
+            // //bounce ball off of walls
+            // if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
+            //     dx = -dx;
+            // }
+            // if (y + dy < ballRadius) {
+            //     dy = -dy;
+            // }
+            // else if (y + dy > canvas.height - ballRadius) {
+            //     if (x > paddleX && x < paddleX + paddleWidth) {
+            //         dy = -dy;
+            //     }
+            //     else {
+            //         lives--;
+            //         if (!lives) {
+            //             // alert("GAME OVER");
+            //             document.location.reload();
+            //         }
+            //         else {
+            //             x = canvas.width / 2;
+            //             y = canvas.height - 30;
+            //             dx = 3;
+            //             dy = -3;
+            //             paddleX = (canvas.width - paddleWidth) / 2;
+            //         }
+            //     }
+            // }
+
+            // if (rightPressed && paddleX < canvas.width - paddleWidth) {
+            //     paddleX += 7;
+            // }
+            // else if (leftPressed && paddleX > 0) {
+            //     paddleX -= 7;
+            // }
+
+            // x += dx;
+            // y += dy;
+
+
+
+
+
+            //# move objects
+            //nextTurn
+
+
+
+
+            //update dx
+
+            // enemyDx^2+enemyDy^2=enemySpeed^2
+            enemies.forEach(enemy => {
+                let baseAngle = Math.atan2(base.y - enemy.y, base.x - enemy.x)
+
+                enemy.dx = Math.cos(baseAngle) * enemySpeed
+                enemy.dy = Math.sin(baseAngle) * enemySpeed
+            })
+
+            // bullets.forEach(obj => {
+            //     //check collisions?
+
+            //     obj.x += obj.dx
+            //     obj.y += obj.dy
+            // })
+
+
+            //move all objects
+            let uOs=new Set([...enemies,...bullets])
+
+            uOs.forEach(obj => {
+                //check collisions?
+
+                obj.x += obj.dx
+                obj.y += obj.dy
+            })
+
+
+            requestAnimationFrame(nextTurn);
+
+            //#hackernotebook
+            // http://www.javascriptkit.com/javatutors/requestanimationframe.shtml
+
+            //             var adiv = document.getElementById('mydiv')
+            // var starttime
+
+            // function moveit(timestamp, el, dist, duration){
+            //     //if browser doesn't support requestAnimationFrame, generate our own timestamp using Date:
+            //     var timestamp = timestamp || new Date().getTime()
+            //     var runtime = timestamp - starttime
+            //     var progress = runtime / duration
+            //     progress = Math.min(progress, 1)
+            //     el.style.left = (dist * progress).toFixed(2) + 'px'
+            //     if (runtime < duration){ // if duration not met yet
+            //         requestAnimationFrame(function(timestamp){ // call requestAnimationFrame again with parameters
+            //             moveit(timestamp, el, dist, duration)
+            //         })
+            //     }
+            // }
+
+            // requestAnimationFrame(function(timestamp){
+            //     starttime = timestamp || new Date().getTime() //if browser doesn't support requestAnimationFrame, generate our own timestamp using Date
+            //     moveit(timestamp, adiv, 400, 2000) // 400px over 1 second
+            // })
+
 
         }
-        
+
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawBase();
@@ -287,75 +415,11 @@
             drawPaddle();
             // drawScore();
             // drawLives();
-            collisionDetection();
 
 
-            //bounce ball off of walls
-            if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
-                dx = -dx;
-            }
-            if (y + dy < ballRadius) {
-                dy = -dy;
-            }
-            else if (y + dy > canvas.height - ballRadius) {
-                if (x > paddleX && x < paddleX + paddleWidth) {
-                    dy = -dy;
-                }
-                else {
-                    lives--;
-                    if (!lives) {
-                        // alert("GAME OVER");
-                        document.location.reload();
-                    }
-                    else {
-                        x = canvas.width / 2;
-                        y = canvas.height - 30;
-                        dx = 3;
-                        dy = -3;
-                        paddleX = (canvas.width - paddleWidth) / 2;
-                    }
-                }
-            }
-
-            if (rightPressed && paddleX < canvas.width - paddleWidth) {
-                paddleX += 7;
-            }
-            else if (leftPressed && paddleX > 0) {
-                paddleX -= 7;
-            }
-
-            x += dx;
-            y += dy;
-
-
-
-
-
-            //# move objects
-            //nextTurn
-
-            // enemyDx^2+enemyDy^2=enemySpeed^2
-            enemies.forEach(enemy => {
-                let baseAngle = Math.atan2(base.y - enemy.y, base.x - enemy.x)
-
-                enemy.x += Math.cos(baseAngle) * enemySpeed
-                enemy.y += Math.sin(baseAngle) * enemySpeed
-            })
-
-            bullets.forEach(obj => {
-                //check collisions?
-
-                enemies.forEach(e => Math.hypot(obj.x - e.x, obj.y - e.y) < e.r ? [enemies.delete(e), bullets.delete(obj)] : null)
-
-                obj.x += obj.dx
-                obj.y += obj.dy
-            })
-
-
-            requestAnimationFrame(draw);
         }
 
-        draw();
+        nextTurn();
     </script>
 
 </body>
