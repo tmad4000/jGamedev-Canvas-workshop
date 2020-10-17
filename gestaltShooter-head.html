@@ -20,7 +20,7 @@
 
 <body>
 
-    <canvas id="myCanvas" width="480" height="320"></canvas>
+    <canvas id="myCanvas" width="880" height="620"></canvas>
 
     <script>
         var canvas = document.getElementById("myCanvas");
@@ -49,7 +49,8 @@
         var score = 0;
         var lives = 3;
 
-        let base = { x: 200, y: 200 }
+        let base = { x: canvas.width/2, y: canvas.height/2 }
+        // let base = { x: 200, y: 200 }
         // let enemies = [] //         // let enemy=()=>{ return {hp:5,x:1000*Math.random(),y:5} }
         // let bullets = [] //{x,y,dx,dy}
 
@@ -272,18 +273,24 @@
             ctx.fillText("Lives: " + lives, canvas.width - 65, 20);
         }
 
+        function nextTurn() {
+
+        }
+        
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawBase();
             drawEnemies();
             drawBullets();
-            drawBricks();
+            // drawBricks();
             // drawBall();
             drawPaddle();
             // drawScore();
             // drawLives();
             collisionDetection();
 
+
+            //bounce ball off of walls
             if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
                 dx = -dx;
             }
