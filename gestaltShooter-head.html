@@ -57,14 +57,14 @@
 
         // let enemy={hp:5,x:1000*Math.random(),y:5}
         // let enemy=()=>{ return {hp:5,x:1000*Math.random(),y:5} }
-        let makeEnemy = () => { return { hp: 5, x: 1000 * Math.random(), y: 200 * Math.random(), r:10 } }
+        let makeEnemy = () => { return { hp: 5, x: 1000 * Math.random(), y: 200 * Math.random(), r: 10 } }
         // let makeBullet = {x: 1000 * Math.random(), y: 200 * Math.random(), } }
 
 
         let enemies = new Set(Array(4).fill(null).map(() => makeEnemy())) //         // let enemy=()=>{ return {hp:5,x:1000*Math.random(),y:5} }
         let bullets = new Set() //{x,y,dx,dy}
- 
-        let uObjs = new Set([...enemies,...bullets]) 
+
+        let uObjs = new Set([...enemies, ...bullets])
         console.log('new')
         // fill(makeEnemy())
 
@@ -181,10 +181,10 @@
         }
 
         function drawEnemies() {
-            enemies.forEach((e) => !("dead" in e) ?  drawEnemy(e) : null)
+            enemies.forEach((e) => !("dead" in e) ? drawEnemy(e) : null)
         }
         function drawBullets() {
-            bullets.forEach((e) => !("dead" in e) ?  drawBullet(e) : null)
+            bullets.forEach((e) => !("dead" in e) ? drawBullet(e) : null)
         }
 
 
@@ -322,7 +322,7 @@
 
 
 
-            
+
 
             //# move objects
             //nextTurn
@@ -338,7 +338,7 @@
             bullets.forEach(obj => {
                 //check collisions?
 
-                enemies.forEach(e=> Math.hypot(obj.x-e.x,obj.y-e.y) < e.r ? e.dead=true : null)
+                enemies.forEach(e => Math.hypot(obj.x - e.x, obj.y - e.y) < e.r ? [enemies.delete(e), bullets.delete(obj)] : null)
 
                 obj.x += obj.dx
                 obj.y += obj.dy
