@@ -49,6 +49,11 @@
         var score = 0;
         var lives = 3;
 
+
+
+        let BASE_RAD = 40
+        let UNREACHABLE_RAD = 400
+
         let base = { x: canvas.width / 2, y: canvas.height / 2 }
         // let base = { x: 200, y: 200 }
         // let enemies = [] //         // let enemy=()=>{ return {hp:5,x:1000*Math.random(),y:5} }
@@ -62,12 +67,12 @@
         let makeEnemy = (inp) => {
             return {
                 hp: 5,
-                text:inp[0] || null, //text
+                text: inp[0] || null, //text
                 speed: inp[1] || 1,
                 x: 1000 * Math.random(), y: 200 * Math.random(), r: 10,
-                dx:null, dy:null,
+                dx: null, dy: null,
 
-                hitFunction: (s) => [s.x-=100*s.dx/Math.hypot(s.dx,s.dy),s.y-=100*s.dy/Math.hypot(s.dx,s.dy)]
+                hitFunction: (s) => [s.x -= 100 * s.dx / Math.hypot(s.dx, s.dy), s.y -= 100 * s.dy / Math.hypot(s.dx, s.dy)]
                 // hitFunction: (s) => [s.x-=300*s.dx,s.y-=300*s.dy]
                 // hitFunction: (s) => enemies.delete(s)
             }
@@ -75,7 +80,7 @@
         // let makeBullet = {x: 1000 * Math.random(), y: 200 * Math.random(), } }
 
 
-        let enemies = new Set([["SI PT",1],["Hand PT",2], ["Sleep 8 hr",1], ["Do qigong",3], ["Oil Change",1/180], ["Dentist",1/180], ["Doctor Checkup",1/180], ["Hamlet Lines"]].map((t) => makeEnemy(t))) //         // let enemy=()=>{ return {hp:5,x:1000*Math.random(),y:5} }
+        let enemies = new Set([["SI PT", 1], ["Hand PT", 2], ["Sleep 8 hr", 1], ["Do qigong", 3], ["Oil Change", 1 / 180], ["Dentist", 1 / 180], ["Doctor Checkup", 1 / 180], ["Hamlet Lines"]].map((t) => makeEnemy(t))) //         // let enemy=()=>{ return {hp:5,x:1000*Math.random(),y:5} }
         // let enemies = new Set(Array(4).fill(null).map(() => makeEnemy())) //         // let enemy=()=>{ return {hp:5,x:1000*Math.random(),y:5} }
         let bullets = new Set() //{x,y,dx,dy}
 
@@ -178,9 +183,9 @@
 
 
         function drawBase() {
-            let BASE_RAD = 40
             ctx.beginPath();
             ctx.arc(base.x, base.y, BASE_RAD, 0, Math.PI * 2);
+            ctx.strokeStyle = "#000";
             // ctx.fillStyle = "#0095DD";
             // ctx.fill();
             ctx.stroke();
@@ -195,6 +200,17 @@
             ctx.beginPath();
             ctx.arc(base.x + BASE_RAD * turret.rX, base.y + BASE_RAD * turret.rY, 10, 0, Math.PI * 2);
             // ctx.fillStyle = "#0095DD";
+            // ctx.fill();
+            ctx.stroke();
+            ctx.closePath();
+
+
+
+
+            //border of unreachability
+            ctx.beginPath();
+            ctx.arc(base.x, base.y, UNREACHABLE_RAD, 0, Math.PI * 2);
+            ctx.strokeStyle = "#AAA";
             // ctx.fill();
             ctx.stroke();
             ctx.closePath();
@@ -224,8 +240,8 @@
             ctx.fillStyle = "#0095DD";
             ctx.fill();
             ctx.closePath();
-            if(e.text) {
-                ctx.fillText(e.text, e.x+e.r+2, e.y);
+            if (e.text) {
+                ctx.fillText(e.text, e.x + e.r + 2, e.y);
             }
 
 
@@ -302,6 +318,9 @@
 
             collisionDetection();
 
+            bullets.forEach(b => Math.hypot(b.x - base.x, b.y - base.y) > UNREACHABLE_RAD ?
+                bullets.delete(b) : null
+            )
 
             // //bounce ball off of walls
             // if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
@@ -356,8 +375,8 @@
             enemies.forEach(enemy => {
                 let baseAngle = Math.atan2(base.y - enemy.y, base.x - enemy.x)
 
-                enemy.dx = Math.cos(baseAngle) * baseEnemySpeed *enemy.speed
-                enemy.dy = Math.sin(baseAngle) * baseEnemySpeed *enemy.speed
+                enemy.dx = Math.cos(baseAngle) * baseEnemySpeed * enemy.speed
+                enemy.dy = Math.sin(baseAngle) * baseEnemySpeed * enemy.speed
             })
 
             // bullets.forEach(obj => {
@@ -369,7 +388,7 @@
 
 
             //move all objects
-            let uOs=new Set([...enemies,...bullets])
+            let uOs = new Set([...enemies, ...bullets])
 
             uOs.forEach(obj => {
                 //check collisions?
