@@ -33,6 +33,7 @@
         var paddleHeight = 10;
         var paddleWidth = 75;
         var paddleX = (canvas.width - paddleWidth) / 2;
+        var paddleY = (canvas.Height - paddleHeight) / 2;
         var rightPressed = false;
         var leftPressed = false;
         var brickRowCount = 5;
@@ -96,6 +97,12 @@
             var relativeX = e.clientX - canvas.offsetLeft;
             if (relativeX > 0 && relativeX < canvas.width) {
                 paddleX = relativeX - paddleWidth / 2;
+            }
+
+
+            var relativeY = e.clientY - canvas.offsetTop;
+            if (relativeY > 0 && relativeY < canvas.height) {
+                paddleY = relativeY - paddleHeight / 2;
             }
         }
         function collisionDetection() {
@@ -180,7 +187,8 @@
 
         function drawPaddle() {
             ctx.beginPath();
-            ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
+            ctx.rect(paddleX, paddleY, paddleWidth, paddleHeight);
+            // ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
             ctx.fillStyle = "#0095DD";
             ctx.fill();
             ctx.closePath();
@@ -217,9 +225,9 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawBase();
             drawEnemies();
-            // drawBricks();
+            drawBricks();
             // drawBall();
-            // drawPaddle();
+            drawPaddle();
             // drawScore();
             // drawLives();
             collisionDetection();
