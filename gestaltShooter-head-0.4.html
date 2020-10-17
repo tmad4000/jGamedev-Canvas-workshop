@@ -134,22 +134,12 @@
 
 
         function drawBase() {
-            let BASE_RAD=40
             ctx.beginPath();
-            ctx.arc(base.x, base.y, BASE_RAD, 0, Math.PI * 2);
+            ctx.arc(base.x, base.y, 40, 0, Math.PI * 2);
             // ctx.fillStyle = "#0095DD";
             // ctx.fill();
             ctx.stroke();
-            ctx.closePath();
 
-//turret
-            let paddleTheta=Math.atan2(paddleY-base.y,paddleX-base.x)
-
-            ctx.beginPath();
-            ctx.arc(base.x+BASE_RAD*Math.cos(paddleTheta), base.y+BASE_RAD*Math.sin(paddleTheta), 10, 0, Math.PI * 2);
-            // ctx.fillStyle = "#0095DD";
-            // ctx.fill();
-            ctx.stroke();
             ctx.closePath();
         }
 
